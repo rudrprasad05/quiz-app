@@ -9,6 +9,109 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  LEADER
+  ADMIN
+}
+
+enum MultipleChoice {
+  A
+  B
+  C
+  D
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model User {
+  id             String         @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  course         String?
+  phone          String?
+  email          String         @unique
+  image          String?
+  hashedPassword String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  role           Role           @default(USER)
+  accounts       Account[]
+  quiz           Quiz[]
+  attempts       Attempt[]
+  registration   Registration[]
+  passUnit Unit?
+  // conversations   Conversation[] @relation(fields: [conversationIds], references: [id])
+  // orders          Order[]
+  // messages        Message[]
+  // repairs         RepairOrder[]
+  // seller          Seller?
+  // giftsOrders     GiftOrder[]
+}
+
+model Quiz {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  week        Int
+  unit        String
+  topic       String
+  maxAttempts Int
+  authorId    String     @db.ObjectId
+  author      User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  questions   Question[]
+  attempts    Attempt[]
+}
+
+model Question {
+  id       String         @id @default(auto()) @map("_id") @db.ObjectId
+  question String
+  image    String?
+  options  String[]
+  quizId   String         @db.ObjectId
+  answer   MultipleChoice
+  quiz     Quiz           @relation(fields: [quizId], references: [id], onDelete: Cascade)
+}
+
+model Attempt {
+  id      String           @id @default(auto()) @map("_id") @db.ObjectId
+  total   Int?
+  userId  String           @db.ObjectId
+  quizId  String           @db.ObjectId
+  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz    Quiz             @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers MultipleChoice[]
+}
+
+model Unit {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  registrations Registration[]
+  leaderId String @db.ObjectId @unique
+  leader User @relation(fields: [leaderId], references: [id], onDelete: Cascade)
+}
+
+model Registration {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  unitId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  unit   Unit   @relation(fields: [unitId], references: [id], onDelete: Cascade)
 }
