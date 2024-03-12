@@ -103,6 +103,7 @@ model Attempt {
 
 model Unit {
   id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  code String
   registrations Registration[]
   leaderId String @db.ObjectId @unique
   leader User @relation(fields: [leaderId], references: [id], onDelete: Cascade)

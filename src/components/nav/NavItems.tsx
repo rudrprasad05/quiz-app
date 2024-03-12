@@ -53,7 +53,7 @@ const NavItems = ({ classname }: { classname?: string }) => {
       {checkRole() && (
         <div className="flex items-center">
           <Link
-            href={`/seller`}
+            href={`/admin`}
             className={`${buttonVariants({ variant: "ghost" })}text-sm`}
           >
             Dashboard
@@ -65,78 +65,13 @@ const NavItems = ({ classname }: { classname?: string }) => {
       {user?.role == "ADMIN" && (
         <div className="flex items-center">
           <Link
-            href={"/admin/dashboard"}
+            href={"/superadmin"}
             className={`${buttonVariants({ variant: "ghost" })}text-sm`}
           >
             Admin Panel
           </Link>
         </div>
       )}
-
-      {/* shops */}
-      <div className="flex items-center">
-        <Link
-          href={"/shop"}
-          className={`${buttonVariants({ variant: "ghost" })}text-sm`}
-        >
-          Shops
-        </Link>
-      </div>
-
-      {/* products */}
-      <div className="flex items-center">
-        <Link
-          href={"/shop/products"}
-          className={`${buttonVariants({ variant: "ghost" })}text-sm`}
-        >
-          Products
-        </Link>
-      </div>
-
-      {/* suprises */}
-      <div className="flex items-center">
-        <Link
-          href={"/gifts"}
-          className={`${buttonVariants({ variant: "ghost" })}text-sm`}
-        >
-          Gifts
-        </Link>
-      </div>
-
-      {/* repairs */}
-      <div className="flex items-center">
-        <Link
-          href={"/repairs"}
-          className={`${buttonVariants({ variant: "ghost" })}text-sm`}
-        >
-          Repairs
-        </Link>
-      </div>
-
-      {PRODUCT_CATEGORIES.map((category, i) => {
-        const handleOpen = () => {
-          if (activeIndex === i) {
-            setActiveIndex(null);
-          } else {
-            setActiveIndex(i);
-          }
-        };
-
-        const close = () => setActiveIndex(null);
-
-        const isOpen = i === activeIndex;
-
-        return (
-          <NavItem
-            category={category}
-            close={close}
-            handleOpen={handleOpen}
-            isOpen={isOpen}
-            key={category.value}
-            isAnyOpen={isAnyOpen}
-          />
-        );
-      })}
     </div>
   );
 };
