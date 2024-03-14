@@ -5,6 +5,7 @@ import {
   ArrowRightToLine,
   Blocks,
   Cog,
+  FlaskConical,
   Home,
   LayoutDashboard,
   LucideIcon,
@@ -12,6 +13,7 @@ import {
   MessageSquareMore,
   Package,
   Store,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -32,20 +34,17 @@ const SideNav = ({ user }: { user: UserType }) => {
     {
       name: "Dashboard",
       icon: LayoutDashboard,
-      link: `/seller/${user.id}/dashboard`,
+      link: `/admin/${user.id}/dashboard`,
     },
     {
-      name: "Units",
-      icon: Package,
-      link: `/seller/${user.id}/products`,
+      name: "Quiz",
+      icon: FlaskConical,
+      link: `/admin/${user.id}/quiz`,
     },
-    { name: "Orders", icon: Blocks, link: `/seller/${user.id}/orders` },
-
-    { name: "Ads", icon: Megaphone, link: `/seller/${user.id}/ads` },
     {
-      name: "Chat",
-      icon: MessageSquareMore,
-      link: `/seller/${user.id}/chat`,
+      name: "Students",
+      icon: Users,
+      link: `/admin/${user.id}/students`,
     },
   ];
 

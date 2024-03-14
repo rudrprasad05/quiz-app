@@ -1,16 +1,27 @@
 // import { Ad, Billboard, Category, Conversation, MerchantOrder, Message, Order, OrderList, Products, Seller, Subcategory, User } from "@prisma/client";
 
-import { Unit, User } from "@prisma/client";
+import { GetAllQuizeForOneUnit } from "@/actions/quiz";
+import { Prisma, Quiz, Unit, User } from "@prisma/client";
 import { z } from "zod";
 
 export type UserType = User;
 
+export type UserWithUnitType = User & {
+  passUnit: Unit;
+};
+
 export type UnitsOnlyType = Unit;
 
 export type PageProps = {
-  params: { userId: string; superAdminId: string };
+  params: { userId: string; superAdminId: string; quizId: string };
   searchParams: { [key: string]: string | string[] | undefined };
 };
+
+export type QuizType = Quiz;
+
+export type GetAllQuizeForOneUnitType = Prisma.PromiseReturnType<
+  typeof GetAllQuizeForOneUnit
+>;
 // export type SellerType = Seller & {
 //   products: Products[];
 // };

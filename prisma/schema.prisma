@@ -72,9 +72,11 @@ model User {
 model Quiz {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
   week        Int
-  unit        String
+  unitId String @db.ObjectId
+  unit        Unit @relation(fields: [authorId], references: [id], onDelete: Cascade)
   topic       String
   maxAttempts Int
+  isPublished Boolean @default(false)
   authorId    String     @db.ObjectId
   author      User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
   questions   Question[]
@@ -103,8 +105,9 @@ model Attempt {
 
 model Unit {
   id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  code String
+  code String @unique
   registrations Registration[]
+  quizes Quiz[]
   leaderId String @db.ObjectId @unique
   leader User @relation(fields: [leaderId], references: [id], onDelete: Cascade)
 }
