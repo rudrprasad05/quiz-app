@@ -1,7 +1,7 @@
 // import { Ad, Billboard, Category, Conversation, MerchantOrder, Message, Order, OrderList, Products, Seller, Subcategory, User } from "@prisma/client";
 
 import { GetAllQuizeForOneUnit } from "@/actions/quiz";
-import { Prisma, Quiz, Unit, User } from "@prisma/client";
+import { Prisma, Question, Quiz, Unit, User } from "@prisma/client";
 import { z } from "zod";
 
 export type UserType = User;
@@ -18,6 +18,8 @@ export type PageProps = {
 };
 
 export type QuizType = Quiz;
+
+export type QuestionType = Question;
 
 export type GetAllQuizeForOneUnitType = Prisma.PromiseReturnType<
   typeof GetAllQuizeForOneUnit

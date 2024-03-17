@@ -24,7 +24,7 @@ export default async function RootLayout({
   return (
     <main className="min-h-screen flex">
       <SideNav user={user} />
-      <div className="p-12 grow">{children}</div>
+      <div className="grow">{children}</div>
     </main>
   );
 }

@@ -74,7 +74,7 @@ export async function FormCard({ form }: { form: Quiz }) {
               asChild
               className={`grow text-muted px-2 bg-muted-foreground hover:bg-muted-foreground/80 w-full text-xs gap-4 `}
             >
-              <Link href={`/admin/${form.authorId}/quiz/${form.id}`}>
+              <Link href={`/admin/${form.authorId}/quiz/${form.id}/edit`}>
                 Edit form <Edit className="w-4 h-4" />
               </Link>
             </Button>
