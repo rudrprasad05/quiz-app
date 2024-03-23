@@ -50,20 +50,6 @@ export const UserRegisterFormSchema = z.object({
     .min(6, { message: "Password must contain more than 2 characters" })
     .max(32, { message: "Password must have less than 2 characters" }),
   role: z.string().optional(),
-  image: z.string().optional(),
-
-  course: z
-    .string()
-    .min(2, { message: "Should have more than 2 characters" })
-    .max(50, { message: "Should have less than 50 characters" }),
-  phone: z
-    .string()
-    .min(2, { message: "Should have more than 2 characters" })
-    .max(50, { message: "Should have less than 50 characters" }),
-  passUnit: z
-    .string()
-    .min(2, { message: "Should have more than 2 characters" })
-    .max(50, { message: "Should have less than 50 characters" }),
 });
 
 export type UserRegisterFormType = z.infer<typeof UserRegisterFormSchema>;
@@ -96,10 +82,6 @@ const UserRegisterForm = () => {
       name: "",
       password: "",
       role: "USER",
-      image: "",
-      course: "",
-      phone: "",
-      passUnit: "",
     },
   });
 
@@ -153,11 +135,11 @@ const UserRegisterForm = () => {
   };
 
   return (
-    <div className="container gap-10 h-[90vh]  relative flex py-10 items-center justify-center lg:px-0">
+    <div className="container gap-10 h-[90vh] max-w-2xl  relative flex py-10 items-center justify-center lg:px-0">
       <div className="grow px-20 flex flex-col justify-center space-y-6 ">
         <div className="flex flex-col items-center space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">
-            Create a Pass Leader Account
+            Create an Account
           </h1>
 
           <Link
@@ -187,42 +169,24 @@ const UserRegisterForm = () => {
                   </FormItem>
                 )}
               />
-              <div className="flex gap-6">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem className="grow">
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          autoComplete="off"
-                          placeholder="enter name"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem className="grow">
-                      <FormLabel>Phone number</FormLabel>
-                      <FormControl>
-                        <Input
-                          autoComplete="off"
-                          placeholder="only used for verification purpose"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem className="grow">
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        autoComplete="off"
+                        placeholder="enter name"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="email"
@@ -274,42 +238,6 @@ const UserRegisterForm = () => {
                   </FormItem>
                 )}
               />
-              <div className="flex gap-6">
-                <FormField
-                  control={form.control}
-                  name="course"
-                  render={({ field }) => (
-                    <FormItem className="grow">
-                      <FormLabel>Course</FormLabel>
-                      <FormControl>
-                        <Input
-                          autoComplete="off"
-                          placeholder="enter current course"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="passUnit"
-                  render={({ field }) => (
-                    <FormItem className="grow">
-                      <FormLabel>Pass Unit</FormLabel>
-                      <FormControl>
-                        <Input
-                          autoComplete="off"
-                          placeholder="enter unit youre taking pass for"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
 
               <>
                 {" "}

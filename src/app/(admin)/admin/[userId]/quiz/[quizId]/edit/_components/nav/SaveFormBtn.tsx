@@ -1,21 +1,24 @@
-import { useTransition } from "react";
-import { toast } from "sonner";
-import { Loader2, Save } from "lucide-react";
+import { SaveQuiz } from "@/actions/quiz";
 import { Button } from "@/components/ui/button";
+import { QuesitonContext } from "@/context/QuesitonContext";
+import { Loader2, Save } from "lucide-react";
+import { useContext, useTransition } from "react";
+import { toast } from "sonner";
 
 function SaveFormBtn({ id }: { id: string }) {
-  // const { elements } = useDesigner();
+  const { questions } = useContext(QuesitonContext);
   const [loading, startTransition] = useTransition();
 
   const updateFormContent = async () => {
     try {
-      // const jsonElements = JSON.stringify(elements);
-      // await UpdateFormContent(id, jsonElements);
+      console.log(questions);
       toast("Your form has been saved");
+      await SaveQuiz(id, questions);
     } catch (error) {
       toast("Something went wrong");
     }
   };
+
   return (
     <Button
       variant={"outline"}

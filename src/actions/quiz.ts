@@ -4,6 +4,7 @@ import prisma from "@/lib/prismadb";
 import getSession from "./getSession";
 import { NewUnitType } from "@/app/(superadmin)/superadmin/[superAdminId]/units/_components/NewUnitButton";
 import { NewQuizType } from "@/app/(admin)/admin/[userId]/quiz/_components/NewQuizButton";
+import { QuestionType } from "@/types";
 
 export const GetAllQuizeForOneUnit = async (authorId: string) => {
   try {
@@ -23,8 +24,33 @@ export const GetAllQuizeForOneUnit = async (authorId: string) => {
   }
 };
 
+export const GetAllQuizesWithUnit = async () => {
+  try {
+    const res = await prisma.unit.findMany({
+      include: {
+        quizes: {
+          include: {
+            attempts: true,
+          },
+        },
+      },
+    });
+
+    if (!res) {
+      return null;
+    }
+
+    return res;
+  } catch (error) {
+    return null;
+  }
+};
+
 export const CreateNewQuiz = async (data: NewQuizType) => {
   const { week, topic, maxAttempts, authorId, unitId } = data;
+  const unit = await prisma.unit.findUnique({
+    where: { id: unitId },
+  });
   const res = await prisma.quiz.create({
     data: {
       week: parseInt(week),
@@ -35,6 +61,7 @@ export const CreateNewQuiz = async (data: NewQuizType) => {
       isPublished: false,
     },
   });
+  return res;
 };
 
 export const GetQuizById = async (id: string) => {
@@ -45,5 +72,51 @@ export const GetQuizById = async (id: string) => {
   });
 
   if (!res) return null;
+  return res;
+};
+
+export const SaveQuiz = async (id: string, data: QuestionType[]) => {
+  console.log(data);
+  let arr = [];
+
+  for (let i = 0; i < data.length; i++) {
+    let { question, options, quizId, refId, image, answer } = data[i];
+    console.log(options);
+    console.log(data[i]);
+    let res = await prisma.question.upsert({
+      where: {
+        refId: refId as string,
+      },
+      update: {
+        question,
+        options,
+        image,
+        answer,
+      },
+      create: {
+        question,
+        options,
+        refId,
+        image,
+        answer,
+        quizId,
+      },
+    });
+    arr.push(res);
+  }
+
+  return arr;
+};
+
+export const GetQuizWithQuestionsById = async (id: string) => {
+  const res = await prisma.quiz.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      questions: true,
+    },
+  });
+
   return res;
 };

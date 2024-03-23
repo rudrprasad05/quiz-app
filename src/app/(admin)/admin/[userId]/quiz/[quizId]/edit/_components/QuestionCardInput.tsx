@@ -72,17 +72,25 @@ const QuestionCardInput = ({
             question.question = e.target.value;
             updateQuestion(question);
           }}
+          defaultValue={question.question}
           placeholder="enter question"
         />
         <div className="grid grid-cols-2 pt-6 gap-3">
-          {Array.from(Array(4).keys()).map((i) => (
-            <Input
-              onBlur={(e) => {
-                question.options[i] = e.target.value;
-                updateQuestion(question);
-              }}
-              placeholder={`enter option ${mc[i]}`}
-            />
+          {Array.from(Array(4).keys()).map((i, index) => (
+            <div className="flex gap-3 items-center">
+              <h3 className="flex gap-[1px] text-muted-foreground">
+                <span>{mc[i]}</span>
+                <span>{`)`}</span>
+              </h3>
+              <Input
+                defaultValue={question.options[index]}
+                onBlur={(e) => {
+                  question.options[i] = e.target.value;
+                  updateQuestion(question);
+                }}
+                placeholder={`enter option ${mc[i]}`}
+              />
+            </div>
           ))}
         </div>
       </div>
@@ -99,7 +107,7 @@ const QuestionCardInput = ({
                 question.answer = e.toUpperCase() as MultipleChoice;
                 updateQuestion(question);
               }}
-              defaultValue={"a"}
+              defaultValue={question.answer.toLocaleLowerCase() || "A"}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select a week" />

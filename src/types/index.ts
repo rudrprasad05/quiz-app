@@ -1,7 +1,7 @@
 // import { Ad, Billboard, Category, Conversation, MerchantOrder, Message, Order, OrderList, Products, Seller, Subcategory, User } from "@prisma/client";
 
 import { GetAllQuizeForOneUnit } from "@/actions/quiz";
-import { Prisma, Question, Quiz, Unit, User } from "@prisma/client";
+import { Attempt, Prisma, Question, Quiz, Unit, User } from "@prisma/client";
 import { z } from "zod";
 
 export type UserType = User;
@@ -11,6 +11,12 @@ export type UserWithUnitType = User & {
 };
 
 export type UnitsOnlyType = Unit;
+
+export type UnitWithAllQuizes = Unit & {
+  quizes: Quiz[] & {
+    attempts: Attempt[];
+  };
+};
 
 export type PageProps = {
   params: { userId: string; superAdminId: string; quizId: string };

@@ -60,7 +60,7 @@ model User {
   quiz           Quiz[]
   attempts       Attempt[]
   registration   Registration[]
-  passUnit Unit?
+  passUnit       Unit?
   // conversations   Conversation[] @relation(fields: [conversationIds], references: [id])
   // orders          Order[]
   // messages        Message[]
@@ -69,14 +69,23 @@ model User {
   // giftsOrders     GiftOrder[]
 }
 
+model Unit {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  code          String         @unique
+  registrations Registration[]
+  quizes        Quiz[]
+  leaderId      String         @unique @db.ObjectId
+  leader        User           @relation(fields: [leaderId], references: [id], onDelete: Cascade)
+}
+
 model Quiz {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
   week        Int
-  unitId String @db.ObjectId
-  unit        Unit @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  unitId      String     @db.ObjectId
+  unit        Unit       @relation(fields: [unitId], references: [id], onDelete: Cascade)
   topic       String
   maxAttempts Int
-  isPublished Boolean @default(false)
+  isPublished Boolean    @default(false)
   authorId    String     @db.ObjectId
   author      User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
   questions   Question[]
@@ -85,6 +94,7 @@ model Quiz {
 
 model Question {
   id       String         @id @default(auto()) @map("_id") @db.ObjectId
+  refId    String?        @unique
   question String
   image    String?
   options  String[]
@@ -101,15 +111,6 @@ model Attempt {
   user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   quiz    Quiz             @relation(fields: [quizId], references: [id], onDelete: Cascade)
   answers MultipleChoice[]
-}
-
-model Unit {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  code String @unique
-  registrations Registration[]
-  quizes Quiz[]
-  leaderId String @db.ObjectId @unique
-  leader User @relation(fields: [leaderId], references: [id], onDelete: Cascade)
 }
 
 model Registration {

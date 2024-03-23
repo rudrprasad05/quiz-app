@@ -1,11 +1,12 @@
 "use client";
 
+import { GetQuizWithQuestionsById } from "@/actions/quiz";
 import { uuid } from "@/lib/utils";
 import { QuestionType, QuizType } from "@/types";
 import { randomUUID } from "crypto";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { createContext, useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { createContext, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 export type QuesitonContextType = {
@@ -18,6 +19,7 @@ export type QuesitonContextType = {
     option: string
   ) => void;
   questions: Partial<QuestionType[]>;
+  initQuestions: () => void;
 };
 
 export const QuesitonContext = createContext<QuesitonContextType>({
@@ -29,6 +31,7 @@ export const QuesitonContext = createContext<QuesitonContextType>({
     optionIndex: number,
     option: string
   ) => {},
+  initQuestions: () => {},
 
   questions: [],
 });
@@ -40,19 +43,28 @@ export function QuestionContextProvider({
 }) {
   const router = useRouter();
   const user = useSession();
+  const params = useParams();
+  const quizId = params.quizId;
   const [questions, setQuestions] = useState<Partial<QuestionType[]>>([]);
 
   let questionTemp: Partial<QuestionType> = {
     question: "",
     image: "",
     options: ["", "", "", ""],
-    quizId: uuid(),
+    quizId: (quizId as string) || uuid(),
     answer: "A",
   };
 
+  const initQuestions = async () => {
+    const res = await GetQuizWithQuestionsById(quizId as string);
+    if (!res) return;
+    setQuestions(res.questions);
+    console.log(res.questions);
+  };
+
   const addQuestion = () => {
-    questionTemp.id = uuid();
-    console.log(questionTemp.id);
+    questionTemp.refId = uuid();
+    questionTemp.quizId = quizId as string;
     setQuestions((prev: any) => [...prev, questionTemp]);
     console.log(questions);
   };
@@ -64,14 +76,14 @@ export function QuestionContextProvider({
   const removeQuestion = (id: string) => {
     let temparr = questions;
     const arrayWithoutD = temparr.filter(function (letter) {
-      return letter?.id !== id;
+      return letter?.refId !== id;
     });
 
     setQuestions(arrayWithoutD);
   };
 
   const updateQuestion = (question: Partial<QuestionType>) => {
-    const pos = questions.map((e) => e?.id).indexOf(question.id);
+    const pos = questions.map((e) => e?.refId).indexOf(question.refId);
     questions[pos] = question as QuestionType;
     console.log(questions);
   };
@@ -81,7 +93,7 @@ export function QuestionContextProvider({
     optionIndex: number,
     option: string
   ) => {
-    const pos = questions.map((e) => e?.id).indexOf(question.id);
+    const pos = questions.map((e) => e?.refId).indexOf(question.refId);
   };
 
   return (
@@ -92,6 +104,7 @@ export function QuestionContextProvider({
         removeQuestion,
         updateQuestion,
         updateOptions,
+        initQuestions,
       }}
     >
       {children}

@@ -3,20 +3,28 @@ import { Button } from "@/components/ui/button";
 import { QuizType } from "@/types";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useContext, useMemo } from "react";
 import PreviewDialogBtn from "./PreviewDialogBtn";
 import SaveFormBtn from "./SaveFormBtn";
 import PublishFormBtn from "./PublishFormBtn";
+import { QuesitonContext } from "@/context/QuesitonContext";
 
 const BuilderNav = ({ quiz }: { quiz: QuizType }) => {
   const router = useRouter();
+  const { initQuestions } = useContext(QuesitonContext);
+
+  // initQuestions();
+  useMemo(() => {
+    initQuestions();
+  }, []);
+
   return (
     <nav className="flex justify-between border-b-2 p-4 gap-3 items-center">
       <div className="flex gap-5 items-center">
         <Button
           variant={"link"}
           className="p-0"
-          onClick={() => router.replace("/admin/posts")}
+          onClick={() => router.replace("/admin")}
         >
           <ArrowLeft className={"w-6 h-6 stroke-primary mr-3"} />
           Back Home

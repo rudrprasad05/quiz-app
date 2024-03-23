@@ -76,14 +76,11 @@ const LoginForm = () => {
           toast("Success", {
             description: "You have logged in",
           });
-          toast("", {
-            description: "'",
-          });
+          router.push("/");
         }
       })
       .finally(() => {
         setIsLoading(false);
-        router.push("/");
       });
   };
 
