@@ -1,6 +1,11 @@
 // import { Ad, Billboard, Category, Conversation, MerchantOrder, Message, Order, OrderList, Products, Seller, Subcategory, User } from "@prisma/client";
 
-import { GetAllQuizeForOneUnit } from "@/actions/quiz";
+import {
+  GetAllQuizeForOneUnit,
+  GetQuizByIdWithQuestions,
+  GetQuizWithAttempts,
+} from "@/actions/quiz";
+import { GetUsersWithAttempts } from "@/actions/user";
 import { Attempt, Prisma, Question, Quiz, Unit, User } from "@prisma/client";
 import { z } from "zod";
 
@@ -29,6 +34,18 @@ export type QuestionType = Question;
 
 export type GetAllQuizeForOneUnitType = Prisma.PromiseReturnType<
   typeof GetAllQuizeForOneUnit
+>;
+
+export type QuizByIdWithQuestionsType = Prisma.PromiseReturnType<
+  typeof GetQuizByIdWithQuestions
+>;
+
+export type GetQuizWithAttemptsType = Prisma.PromiseReturnType<
+  typeof GetQuizWithAttempts
+>;
+
+export type GetUsersWithAttemptsType = Prisma.PromiseReturnType<
+  typeof GetUsersWithAttempts
 >;
 // export type SellerType = Seller & {
 //   products: Products[];

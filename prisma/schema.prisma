@@ -76,6 +76,8 @@ model Unit {
   quizes        Quiz[]
   leaderId      String         @unique @db.ObjectId
   leader        User           @relation(fields: [leaderId], references: [id], onDelete: Cascade)
+   createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 }
 
 model Quiz {
@@ -90,6 +92,8 @@ model Quiz {
   author      User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
   questions   Question[]
   attempts    Attempt[]
+   createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 }
 
 model Question {
@@ -101,6 +105,8 @@ model Question {
   quizId   String         @db.ObjectId
   answer   MultipleChoice
   quiz     Quiz           @relation(fields: [quizId], references: [id], onDelete: Cascade)
+   createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 }
 
 model Attempt {
@@ -111,6 +117,8 @@ model Attempt {
   user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   quiz    Quiz             @relation(fields: [quizId], references: [id], onDelete: Cascade)
   answers MultipleChoice[]
+   createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 }
 
 model Registration {
@@ -119,4 +127,6 @@ model Registration {
   unitId String @db.ObjectId
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   unit   Unit   @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 }

@@ -71,3 +71,17 @@ export const GetCurrentUserOnlyById = async (id: string) => {
     return null;
   }
 };
+
+export const GetUsersWithAttempts = async () => {
+  const currentUser = await prisma.user.findMany({
+    include: {
+      attempts: true,
+    },
+  });
+
+  if (!currentUser) {
+    return null;
+  }
+
+  return currentUser;
+};

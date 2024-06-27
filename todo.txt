@@ -1,0 +1,5 @@
+// TODO create seperate pages for account creation. register/student register/leaders. /register page will have options to select from. are you --- student or leader. 
+// TODO leaders will have to be approved by site admin. create seciton in admin panel. 
+// TODO quiz page not working, 
+// TODO publish button not working in tempplate editor dnd context
+// TODO 

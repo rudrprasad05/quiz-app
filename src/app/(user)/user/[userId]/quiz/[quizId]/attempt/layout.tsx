@@ -1,16 +1,15 @@
 import { GetCurrentUserOnly } from "@/actions/user";
-import Footer from "@/components/global/Footer";
-import Navbar from "@/components/nav/NavBar";
-import SideNav from "@/components/nav/SideNav";
 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { redirect } from "next/navigation";
+import { QuestionContextProvider } from "@/context/QuesitonContext";
+import { AnswerContextProvider } from "@/context/AnswerContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Quiz App Admin",
+  title: "Quiz App",
   description: "Designed, developed and Powered by Procyon",
 };
 
@@ -21,12 +20,5 @@ export default async function RootLayout({
 }) {
   const user = await GetCurrentUserOnly();
   if (!user) return redirect("/");
-  console.log(user);
-
-  return (
-    <main className="min-h-screen flex">
-      <SideNav user={user} />
-      <div className="grow">{children}</div>
-    </main>
-  );
+  return <AnswerContextProvider>{children}</AnswerContextProvider>;
 }

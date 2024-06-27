@@ -1,5 +1,6 @@
 "use client";
 
+import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardDescription,
@@ -31,10 +32,13 @@ const QuizCard = ({ units }: { units: any }) => {
                 <CardTitle>{unit.code}</CardTitle>
                 <CardDescription>Week {quiz.week}</CardDescription>
               </CardHeader>
-              <CardFooter>
+              <CardFooter className="flex flex-row justify-between">
                 <CardDescription>{quiz.topic}</CardDescription>
-                <Link href={`/user/${userId}/quiz/${quiz.id}/attempt`}>
-                  Attempt
+                <Link
+                  className={buttonVariants({ variant: "link" })}
+                  href={`/user/${userId}/quiz/${quiz.id}/details`}
+                >
+                  View
                 </Link>
               </CardFooter>
             </Card>

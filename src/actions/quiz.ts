@@ -5,6 +5,7 @@ import getSession from "./getSession";
 import { NewUnitType } from "@/app/(superadmin)/superadmin/[superAdminId]/units/_components/NewUnitButton";
 import { NewQuizType } from "@/app/(admin)/admin/[userId]/quiz/_components/NewQuizButton";
 import { QuestionType } from "@/types";
+import { Attempt } from "@prisma/client";
 
 export const GetAllQuizeForOneUnit = async (authorId: string) => {
   try {
@@ -75,6 +76,21 @@ export const GetQuizById = async (id: string) => {
   return res;
 };
 
+export const GetQuizByIdWithQuestions = async (id: string) => {
+  const res = await prisma.quiz.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      questions: true,
+      unit: true,
+    },
+  });
+
+  if (!res) return null;
+  return res;
+};
+
 export const SaveQuiz = async (id: string, data: QuestionType[]) => {
   console.log(data);
   let arr = [];
@@ -118,5 +134,30 @@ export const GetQuizWithQuestionsById = async (id: string) => {
     },
   });
 
+  return res;
+};
+
+export const CreateAttempt = async (data: Partial<Attempt>) => {
+  const { total, userId, quizId, answers } = data;
+  const res = await prisma.attempt.create({
+    data: {
+      total: total as number,
+      userId: userId as string,
+      quizId: quizId as string,
+      answers,
+    },
+  });
+  return res;
+};
+
+export const GetQuizWithAttempts = async (id: string) => {
+  const res = await prisma.quiz.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      attempts: true,
+    },
+  });
   return res;
 };
