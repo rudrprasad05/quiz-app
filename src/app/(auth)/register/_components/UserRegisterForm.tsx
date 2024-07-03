@@ -38,19 +38,37 @@ import {
 import { z } from "zod";
 import Image from "next/image";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-export const UserRegisterFormSchema = z.object({
-  email: z.string().email({ message: "Enter a Valid Email" }),
-  name: z
-    .string()
-    .min(2, { message: "Should have more than 2 characters" })
-    .max(50, { message: "Should have less than 50 characters" }),
-  password: z
-    .string()
-    .min(6, { message: "Password must contain more than 2 characters" })
-    .max(32, { message: "Password must have less than 2 characters" }),
-  role: z.string().optional(),
-});
+export const UserRegisterFormSchema = z
+  .object({
+    email: z.string().email({ message: "Enter a Valid Email" }),
+    name: z
+      .string()
+      .min(2, { message: "Should have more than 2 characters" })
+      .max(50, { message: "Should have less than 50 characters" }),
+    password: z
+      .string()
+      .min(6, { message: "Password must contain more than 2 characters" })
+      .max(32, { message: "Password must have less than 2 characters" }),
+    confirmPassword: z.string(),
+    role: z.string(),
+  })
+  .superRefine(({ confirmPassword, password }, ctx) => {
+    if (confirmPassword !== password) {
+      ctx.addIssue({
+        code: "custom",
+        message: "The passwords did not match",
+        path: ["confirmPassword"],
+      });
+    }
+  });
 
 export type UserRegisterFormType = z.infer<typeof UserRegisterFormSchema>;
 
@@ -63,12 +81,7 @@ const UserRegisterForm = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState<string>("");
   const [redirectToSetup, setredirectToSetup] = useState(false);
-  const [showConfirmDialogue, setShowConfirmDialogue] = useState(isEmailSent);
-  const [loadingImage, setloadingImage] = useState<boolean>(false);
-  const [formReadyToUpload, setFormReadyToUpload] = useState<boolean>(false);
-  const [imageUpload, setImageUpload] = useState(false);
-  const [imageUrl, setImageUrl] = useState("");
-  const [isImageInCloud, setIsImageInCloud] = useState(false);
+
   const checkAuth = () => {
     if (redirectToSetup && session.data?.user.id != undefined) {
       router.push(`/seller/auth/${session.data?.user.id}`);
@@ -81,13 +94,13 @@ const UserRegisterForm = () => {
       email: "",
       name: "",
       password: "",
+      confirmPassword: "",
       role: "USER",
     },
   });
 
   function onSubmit(data: UserRegisterFormType) {
     setIsLoading(true);
-    data.role = "USER";
     console.log(data);
     axios
       .post("/api/register", data)
@@ -100,39 +113,8 @@ const UserRegisterForm = () => {
       })
       .finally(() => {
         setIsLoading(false);
-        setShowConfirmDialogue(true);
       });
   }
-
-  const handleImageUpload = async (file: File) => {
-    setImageUpload(true);
-    if (!file) return;
-
-    try {
-      const data = new FormData();
-      data.set("file", file);
-
-      const res = await fetch("/api/s3-upload", {
-        method: "POST",
-        body: data,
-      })
-        .then(() => {
-          setImageUpload(false);
-          setImageUrl(
-            `https://mctechfiji.s3.amazonaws.com/alibaba/${file?.name}`
-          );
-          setIsImageInCloud(true);
-          toast.success("Image Uploaded to Cloud");
-        })
-        .catch((e) => {
-          toast("Something went wrong", { description: "Contact site USER" });
-        });
-      // handle the error
-    } catch (e: any) {
-      // Handle errors here
-      console.error(e);
-    }
-  };
 
   return (
     <div className="container gap-10 h-[90vh] max-w-2xl  relative flex py-10 items-center justify-center lg:px-0">
@@ -239,73 +221,65 @@ const UserRegisterForm = () => {
                 )}
               />
 
-              <>
-                {" "}
-                {/* <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Input
-                        type={isPasswordVisible ? "text" : "password"}
-                        autoComplete="off"
-                        placeholder="enter password"
-                        {...field}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (isPasswordVisible) setIsPasswordVisible(false);
-                          else setIsPasswordVisible(true);
-                        }}
-                        className=" h-full aspect-square absolute top-0 right-0 grid place-items-center "
-                      >
-                        {isPasswordVisible ? (
-                          <FiEyeOff className="stroke-muted-foreground w-5 h-5" />
-                        ) : (
-                          <FiEye className="stroke-muted-foreground w-5 h-5" />
-                        )}
-                      </button>
-                    </div>
-                  </FormControl>
-                  <div>{confirmPasswordError}</div>
-                </FormItem>
-              )}
-            /> */}
-              </>
-              <div className="flex gap-3 my-6 items-center">
-                <Label>Avatar</Label>
-                <label htmlFor="file" className="cursor-pointer">
-                  <div className="items-center rounded-md p-2 bg-secondary text-secondary-foreground hover:bg-secondary/80 flex gap-3">
-                    <Upload />
-                    <h2 className="text-sm">Upload Image</h2>
-                  </div>
-                  <input
-                    id="file"
-                    type="file"
-                    name="file"
-                    hidden
-                    onChange={(e) => {
-                      handleImageUpload(e.target.files?.[0] as File);
-                    }}
-                  />
-                </label>
-
-                {imageUpload && (
-                  <div>
-                    <Loader2 className="animate-spin" />
-                  </div>
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type={isPasswordVisible ? "text" : "password"}
+                          autoComplete="off"
+                          placeholder="enter password"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (isPasswordVisible) setIsPasswordVisible(false);
+                            else setIsPasswordVisible(true);
+                          }}
+                          className=" h-full aspect-square absolute top-0 right-0 grid place-items-center "
+                        >
+                          {isPasswordVisible ? (
+                            <EyeOff className="stroke-muted-foreground w-5 h-5" />
+                          ) : (
+                            <Eye className="stroke-muted-foreground w-5 h-5" />
+                          )}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
+              />
 
-                {isImageInCloud && (
-                  <div>
-                    <Image src={imageUrl} alt="image" width={50} height={50} />
-                  </div>
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a verified email to display" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="USER">user</SelectItem>
+                        <SelectItem value="LEADER">leader</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </div>
+              />
 
               <Button className="w-full" type="submit">
                 {isLoading && <Loader2 className={"animate-spin mr-3"} />}

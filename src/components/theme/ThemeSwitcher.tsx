@@ -15,7 +15,7 @@ function ThemeSwitcher() {
 
   if (!mounted) return null; // avoid rehydration errors
   return (
-    <Tabs defaultValue={theme}>
+    <Tabs defaultValue={"light"}>
       <TabsList className="border">
         <TabsTrigger value="light" onClick={() => setTheme("light")}>
           <Sun className="h-3 w-3  md:h-[1.2rem] md:w-[1.2rem]" />
